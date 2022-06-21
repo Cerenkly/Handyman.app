@@ -33,22 +33,22 @@ class Handyman(db.Model):
     price_per_hour = db.Column(db.Integer)
     user_id = db.Column(db.Integer,db.ForeignKey("users.user_id"))
 
-    user = db.relationship("User", backref="handymans")
+    user = db.relationship("User", uselist=False, backref="handyman")
 
     def __repr__(self):
         return f"<Handyman handyman_id={self.handyman_id} company_name={self.company_name} zip_code={self.zip_code} radius= {self.radius} price_per_hour{self.price_per_hour}>"
 
 
-class Handyman_Service(db.Model):
+class HandymanService(db.Model):
 
     __tablename__ = "handyman_service"
 
     handyman_service_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    handyman_id = db.Column(db.Integer,db.ForeignKey("handymans.handyman_id"))
-    user_id = db.Column(db.Integer,db.ForeignKey("users.user_id"))
+    handyman_id = db.Column(db.Integer,db.ForeignKey("handymans.handyman_id"), nullable=False)
+    service_id = db.Column(db.Integer, db.ForeignKey("service.service_id"), nullable= False)
 
-    handyman = db.relationship("Handyman", backref="handyman_service")
-    user = db.relationship("User", backref="handyman_service")
+    #handyman = db.relationship("Handyman", uselist= False, backref="handyman_service")
+    #user = db.relationship("User", uselist= False, backref="handyman_service")
 
     def __repr__(self):
         return f"<Handyman_service handyman_service_id={self.handyman_service_id}>"
@@ -58,10 +58,9 @@ class Service(db.Model):
     __tablename__ = "service"
 
     service_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    servise_name = db.Column(db.String)
-    handyman_id = db.Column(db.Integer,db.ForeignKey("handymans.handyman_id"))
+    service_name = db.Column(db.String)
 
-    handyman = db.relationship("Handyman", backref="service")
+    handyman = db.relationship("Handyman",secondary= "handyman_service", backref="services")
 
     def __repr__(self):
         return f"<Service service_id={self.service_id} service_name={self.service_name}>"
@@ -144,6 +143,28 @@ def connect_to_db(flask_app, db_uri="postgresql:///handyman", echo=True):
 
     print("Connected to the db!")
 
+def test_models():
+    user = User(first_name="Ione", last_name="Axelrod", email="i@poop.com", password="123")
+    db.session.add(user)
+    db.session.commit()
+
+    handyman = Handyman(company_name="Hackbright", price_per_hour=9.3, user_id=user.user_id)
+    service = Service(service_name="Unclog toilet")
+
+    db.session.add(handyman)
+    db.session.add(service)
+    db.session.commit()
+    
+    handyman_service = HandymanService(handyman_id=handyman.handyman_id, service_id = service.service_id)
+    db.session.add(handyman_service)
+    db.session.commit()
+    
+    print("User Info", User.query.all())    
+    print("Handyman Info", Handyman.query.all())
+    print("Service Info", Service.query.all())
+    print("Handyman Service Info", HandymanService.query.all())
+    
+
 
 if __name__ == "__main__":
     from server import app
@@ -154,3 +175,4 @@ if __name__ == "__main__":
 
     connect_to_db(app)
     db.create_all()
+    test_models()

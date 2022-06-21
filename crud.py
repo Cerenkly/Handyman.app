@@ -1,4 +1,4 @@
-from model import db, User, Handyman, Handyman_Service, Service, Rating, Comment, Question, Answer, connect_to_db
+from model import db, User, Handyman, HandymanService, Service, Rating, Comment, Question, Answer, connect_to_db
 
 def create_user(first_name, last_name, email, password, user_address):
     """Create and return a new user."""

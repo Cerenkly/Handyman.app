@@ -6,8 +6,11 @@
     <title>
       {% block title %}{% endblock %}
     </title>
-    <link href="/static/css/site.css" rel="stylesheet">
+
     {% block head %}{% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/site.css">
   </head>
   <body>
     {% for msg in get_flashed_messages() %}
@@ -21,3 +24,5 @@
     {% block after_body %}{% endblock %}
   </body>
 </html>
+
+

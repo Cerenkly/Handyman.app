@@ -8,34 +8,61 @@
   <a href="#about">About</a>
   <a href="#contact">Contact</a>
   <div class="login-container">
-    <form action="/login">
-      <input type="text" placeholder="Username" name="username">
-      <input type="password" placeholder="Password" name="psw">
-      <button type="submit">Login</button>
+    <form class="inline" action="/create_account">
+      <button class="button-topnav" type="submit">Create Account</button>
     </form>
+    <!--<form class="inline" action="/login">
+      <button type="submit">Login</button>
+    </form>-->
+    <button class="inline button-topnav" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+    <div id="id01" class="modal">
+  
+      <form class="modal-content animate" action="/action_page.php" method="post">
+        <div class="imgcontainer">
+          <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+          <img src="/static/img/handyman_background.jpeg" alt="Avatar" class="avatar">
+        </div>
+    
+        <div class="container">
+          <label for="uname"><b>Username</b></label>
+          <input class="login-input" type="text" placeholder="Enter Username" name="uname" required>
+    
+          <label for="psw"><b>Password</b></label>
+          <input class="login-input" type="password" placeholder="Enter Password" name="psw" required>
+            
+          <button class="login-button" type="submit">Login</button>
+          <label>
+            <input type="checkbox" checked="checked" name="remember"> Remember me
+          </label>
+        </div>
+    
+        <div class="container" style="background-color:#f1f1f1">
+          <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+          <span class="psw">Forgot 
+            <a href="#">password?</a></span>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
-<div style="padding-left:16px">
-  <h2>Welcome!</h2>
-  <p>What do you need today?</p>
+<div>
+  <h2 class="center">Welcome!</h2>
 </div>
 
-
- <!--
-  <h2>Log In</h2>
-  <form action="/login" method="POST">
-    <p>
-      Email <input type="text" name="email">
-    </p>
-
-    <p>
-      Password <input type="password" name="password">
-    </p>
-
-    <p>
-      <input type="submit">
-    </p>
+  
+  <p>
+    <h2 class="center">Which service do you need today?</h2>
+  </p>
+  <form class="example center" action="/search_result">
+    <input type="text" placeholder="Search.." name="search">
+    <button type="submit"><i class="fa fa-search"></i></button>
   </form>
--->
+  
+  <script src="/static/js/homepage.js"></script>
+
+
+
+
+
 {% endblock %}
