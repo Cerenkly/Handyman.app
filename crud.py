@@ -31,13 +31,14 @@ def get_user_by_email(email):
 
     return User.query.filter(User.email == email).first()    
 
-def create_handyman(company_name, price_per_hour, radius, zip_code): 
+def create_handyman(company_name, price_per_hour, radius, zip_code, user_id): 
 
     handyman = Handyman(
         company_name=company_name,
         price_per_hour=price_per_hour,
         radius=radius,
         zip_code=zip_code,
+        user_id=user_id
     )
 
     return handyman    
@@ -45,6 +46,10 @@ def create_handyman(company_name, price_per_hour, radius, zip_code):
 def get_handymans():
 
      return Handyman.query.all()
+
+def get_handyman_by_name(company_name):
+
+    return Handyman.query.filter(Handyman.company_name == company_name).first()  
 
 
 def get_handyman_by_id(handyman_id):
@@ -67,6 +72,21 @@ def update_rating(rating_id, new_score):
     rating = Rating.query.get(rating_id)
     rating.score = new_score     
 
+
+def create_service(service_name):
+    service = Service(service_name=service_name)
+    return service
+
+def get_service_by_name(service_name):
+    service_obj = Service.query.filter(Service.service_name == service_name).first()
+    return service_obj
+
+def create_handyman_service(handy_id, service_id):
+    handyman_service = HandymanService(handyman_id=handy_id, service_id=service_id)
+    return handyman_service
+
+def get_handymanid_by_serviceid(service_id):
+    HandymanService.query.filter()
 
 if __name__ == "__main__":
     from server import app

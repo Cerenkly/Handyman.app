@@ -2,49 +2,60 @@
 {% block title %}Handyman Home{% endblock %}
 
 {% block body %}
-
+<!--
 <div class="topnav">
-  <a class="active" href="#home">Home</a>
-  <a href="#about">About</a>
-  <a href="#contact">Contact</a>
+  <a class="active nav-link" href="#home">Home</a>
+  <a class="nav-link" href="#about">About</a>
+  <a class="nav-link" href="#contact">Contact</a>
+  <a class="nav-link" href="/handyman_profile">Profile</a>
   <div class="login-container">
-    <form class="inline" action="/create_account">
-      <button class="button-topnav" type="submit">Create Account</button>
-    </form>
-    <!--<form class="inline" action="/login">
-      <button type="submit">Login</button>
-    </form>-->
-    <button class="inline button-topnav" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
-    <div id="id01" class="modal">
-  
-      <form class="modal-content animate" action="/action_page.php" method="post">
-        <div class="imgcontainer">
-          <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-          <img src="/static/img/handyman_background.jpeg" alt="Avatar" class="avatar">
-        </div>
-    
-        <div class="container">
-          <label for="uname"><b>Username</b></label>
-          <input class="login-input" type="text" placeholder="Enter Username" name="uname" required>
-    
-          <label for="psw"><b>Password</b></label>
-          <input class="login-input" type="password" placeholder="Enter Password" name="psw" required>
-            
-          <button class="login-button" type="submit">Login</button>
-          <label>
-            <input type="checkbox" checked="checked" name="remember"> Remember me
-          </label>
-        </div>
-    
-        <div class="container" style="background-color:#f1f1f1">
-          <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
-          <span class="psw">Forgot 
-            <a href="#">password?</a></span>
-        </div>
+
+    {% if session.get('email') %}
+      <div>Welcome {{session.get('email')}}</div>
+      <form class="inline" action="/logout">
+        <button class="button-topnav" type="submit">Log Out</button>
       </form>
-    </div>
+      <form class="inline" action="/handyman_account">
+        <button class="button-topnav" type="submit">Become a Handyman</button>
+      </form>
+
+    {% else %}
+      <form class="inline" action="/create_account">
+        <button class="button-topnav" type="submit">Create Account</button>
+      </form>
+
+      <button class="inline button-topnav" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+      <div id="id01" class="modal">
+    
+        <form class="modal-content animate" action="/login" method="post">
+          <div class="imgcontainer">
+            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+            <img src="/static/img/handyman_background.jpeg" alt="Avatar" class="avatar">
+          </div>
+      
+          <div class="container">
+            <label for="uname"><b>Username</b></label>
+            <input class="login-input" type="text" placeholder="Enter Username" name="email" required>
+      
+            <label for="psw"><b>Password</b></label>
+            <input class="login-input" type="password" placeholder="Enter Password" name="password" required>
+              
+            <button class="login-button" type="submit">Login</button>
+            <label>
+              <input type="checkbox" checked="checked" name="remember"> Remember me
+            </label>
+          </div>
+      
+          <div class="container" style="background-color:#f1f1f1">
+            <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+            <span class="psw">Forgot <a href="#">password?</a></span>
+          </div>
+        </form>
+      </div>
+    {% endif %}
   </div>
 </div>
+-->
 
 <div>
   <h2 class="center">Welcome!</h2>
@@ -55,10 +66,11 @@
     <h2 class="center">Which service do you need today?</h2>
   </p>
   <form class="example center" action="/search_result">
-    <input type="text" placeholder="Search.." name="search">
-    <button type="submit"><i class="fa fa-search"></i></button>
+    <input type="text" placeholder="E.g. cleaning, painting, moving" name="search">
+    <button type="submit" value="submit"><i class="fa fa-search"></i></button>
   </form>
   
+  <div id="homepage"></div>
   <script src="/static/js/homepage.js"></script>
 
 

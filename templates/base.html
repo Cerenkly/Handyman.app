@@ -19,7 +19,67 @@
       </p>
     {% endfor %}
 
-    {% block body %}{% endblock %}
+   
+    <div class="topnav">
+      <a class="active nav-link" href="/">Home</a>
+      <a class="nav-link" href="#about">About</a>
+      <a class="nav-link" href="#contact">Contact</a>
+      {% if session.get('company_name') %}
+        <a class="nav-link" href="/handyman_profile">Profile</a>
+      {% endif %}
+      <div class="login-container">
+    
+        {% if session.get('email') %}
+          <div>Welcome {{session.get('email')}}</div>
+          <form class="inline" action="/logout">
+            <button class="button-topnav" type="submit">Log Out</button>
+          </form>
+          {% if session.get('company_name') %}
+            <span class="company">{{session.get('company_name')}}</span>
+          {% else %}
+            <form class="inline" action="/handyman_account">
+              <button class="button-topnav" type="submit">Become a Handyman</button>
+            </form>
+          {% endif %}
+    
+        {% else %}
+          <form class="inline" action="/create_account">
+            <button class="button-topnav" type="submit">Create Account</button>
+          </form>
+    
+          <button class="inline button-topnav" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+          <div id="id01" class="modal">
+        
+            <form class="modal-content animate" action="/login" method="post">
+              <div class="imgcontainer">
+                <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+                <img src="/static/img/handyman_background.jpeg" alt="Avatar" class="avatar">
+              </div>
+          
+              <div class="container">
+                <label for="uname"><b>Username</b></label>
+                <input class="login-input" type="text" placeholder="Enter Username" name="email" required>
+          
+                <label for="psw"><b>Password</b></label>
+                <input class="login-input" type="password" placeholder="Enter Password" name="password" required>
+                  
+                <button class="login-button" type="submit">Login</button>
+                <label>
+                  <input type="checkbox" checked="checked" name="remember"> Remember me
+                </label>
+              </div>
+          
+              <div class="container" style="background-color:#f1f1f1">
+                <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+                <span class="psw">Forgot <a href="#">password?</a></span>
+              </div>
+            </form>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% block body %}
+    {% endblock %}
 
     {% block after_body %}{% endblock %}
   </body>

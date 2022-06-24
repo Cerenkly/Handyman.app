@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Handyman Home{% endblock %}
+
+{% block body %}
+
+  <h2>Create an Handyman Account</h2>
+  <form action="/create_handyman" class="handyman-account-input" method="POST">
+    <p>
+      Company_name <input type="text" name="company_name">
+    </p>
+    <p>
+      Price_per_hour <input type="integer" name="price_per_hour">
+    </p>
+    <p>
+      Radius <input type="integer" name="radius">
+    </p>
+    <p>
+      Zip_code <input type="integer" name="zip_code">
+    </p>
+    <p>
+      <h1>Services</h1>
+    </p>
+    <input type="checkbox" name="cleaning" value="cleaning">
+    <label for="service_name"> Cleaning</label><br>
+    <input type="checkbox" name="moving" value="moving">
+    <label for="service_name"> Moving</label><br>
+    <input type="checkbox" name="painting" value="painting">
+    <label for="service_name"> Painting</label><br><br>
+    <p>
+      <input type="submit">
+    </p>
+  </form>
+
+<!--
+  <form action = "/post-form-data" method="POST" enctype="multipart/form-data">
+    <input type="file" name="my file">
+    <input type="submit">
+  </form>
+-->
+
+{% endblock %}  
+
+  

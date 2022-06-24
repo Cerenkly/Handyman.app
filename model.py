@@ -33,7 +33,7 @@ class Handyman(db.Model):
     price_per_hour = db.Column(db.Integer)
     user_id = db.Column(db.Integer,db.ForeignKey("users.user_id"))
 
-    user = db.relationship("User", uselist=False, backref="handyman")
+    user = db.relationship("User", backref=("handyman"), uselist=True)
 
     def __repr__(self):
         return f"<Handyman handyman_id={self.handyman_id} company_name={self.company_name} zip_code={self.zip_code} radius= {self.radius} price_per_hour{self.price_per_hour}>"
@@ -163,8 +163,17 @@ def test_models():
     print("Handyman Info", Handyman.query.all())
     print("Service Info", Service.query.all())
     print("Handyman Service Info", HandymanService.query.all())
-    
 
+
+
+def test_query():
+    #a = User.query.first()
+    #print("Handyman Service Info", a.handyman[0].company_name)
+    #print("Foreign", a.handyman_id.company_name)
+
+    #print("Service Info", Service.query.all())
+    service_obj = Service.query.filter(Service.service_name == "painting").first()
+    print("Found:", service_obj.service_id)
 
 if __name__ == "__main__":
     from server import app
@@ -174,5 +183,6 @@ if __name__ == "__main__":
     # query it executes.
 
     connect_to_db(app)
-    db.create_all()
-    test_models()
+    #db.create_all()
+    #test_models()
+    test_query()
