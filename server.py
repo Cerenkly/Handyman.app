@@ -152,7 +152,9 @@ def goto_handyman_profile():
 @app.route("/search_result")
 def api_call():
     search_input = request.args.get("search")
-    #return render_template("test.html", test=search_input)
+    company_list_db = crud.get_company_by_service_name(search_input)
+    #return render_template("test.html", test=company_list_db)
+
     handyman_list = []
     headers = {'Authorization': f"Bearer {os.environ['YELP_MASTER_KEY']}"}
     url='https://api.yelp.com/v3/businesses/search'
@@ -163,21 +165,75 @@ def api_call():
 
     response = requests.get(url, params=payload, headers=headers)
     #print(response.url)
+    #data = response.json()
+    #return render_template("test.html", test=data["businesses"])
     data = response.json()
     #print(data)
-    if '_embedded' in data:
-        result = data['_embedded']['handyman']
-    else:
-        result = []
-    #print(result)
+
     #print(data["businesses"])
-    for dict in data["businesses"]:
-        handyman_list.append(dict["name"])
-        #print(dict["name"])
-        #for key in dict:
-        #    print(key)
+    #for dict in data["businesses"]:
+    #    handyman_list.append(dict["name"])
+
     #print(handyman_list)
-    return render_template("search_results.html", handyman_list_html=handyman_list)
+    #handyman_list.extend(company_list_db)
+    session["yelp_results"] = data["businesses"]
+
+    return render_template("search_results.html", handyman_list_html=data["businesses"])
+
+@app.route("/search_result/<id>")
+def show_company_profile(id):
+
+    headers = {'Authorization': f"Bearer {os.environ['YELP_MASTER_KEY']}"}
+    url='https://api.yelp.com/v3/businesses/' + id
+
+    response = requests.get(url, headers=headers)
+    #print(response.url)
+    data = response.json()
+    session["current_yelp_business"] = data
+    #handyman_company_profile = crud.get_handyman_by_id(id)
+    #return render_template("test.html", test=data)
+    return render_template("company_profile.html", handyman=data)
+
+@app.route("/update_rating", methods=["POST"])
+def update_rating():
+    rating_id = request.json["rating_id"]
+    updated_score = request.json["updated_score"]
+    crud.update_rating(rating_id, updated_score)
+    db.session.commit()
+
+    return "Success"
+
+@app.route("/search_result/<handyman_id>/ratings", methods=["POST"])
+def create_rating(handyman_id):
+    """Create a new rating for the movie."""
+
+    logged_in_email = session.get("email")
+    rating_score = request.form.get("rating")
+
+    if logged_in_email is None:
+        flash("You must log in to rate a movie.")
+    elif not rating_score:
+        flash("Error: you didn't select a score for your rating.")
+    else:
+        user = crud.get_user_by_email(logged_in_email)
+        #handyman = crud.get_handyman_by_id(handyman_id)
+        #headers = {'Authorization': f"Bearer {os.environ['YELP_MASTER_KEY']}"}
+        #url='https://api.yelp.com/v3/businesses/' + handyman_id
+
+        #response = requests.get(url, headers=headers)
+        #handyman = response.json()
+
+        handyman = session.get("current_yelp_business")
+
+        #return render_template("test.html", test=user.user_id)
+        rating = crud.create_rating(user.user_id, handyman["id"], int(rating_score))
+        db.session.add(rating)
+        db.session.commit()
+
+        flash(f"You rated this handyman {rating_score} out of 5.")
+
+    return redirect(f"/search_result/{handyman_id}")
+
 
 
 if __name__ == "__main__":

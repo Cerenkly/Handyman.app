@@ -6,8 +6,10 @@
 <p></p>
 
 <ol>
-    {% for company_name in handyman_list_html %}
-        <li>{{company_name}}</li>
+    {% for index in handyman_list_html %}
+        <a href="/search_result/{{index.id}}">
+            <li>{{index.name}}</li>
+        </a>
     {% endfor %}
       
 </ol>

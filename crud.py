@@ -47,6 +47,20 @@ def get_handymans():
 
      return Handyman.query.all()
 
+def get_company_by_service_name(service_name):
+    """Return company name by service name"""
+    company_list = []
+    all_handyman = get_handymans()
+    for handyman in all_handyman:
+        #if not empty list
+        if handyman.services:
+            service_name_result = handyman.services[0].service_name
+            #print("Services:", service_name)
+            if service_name_result == service_name:
+                company_list.append(handyman.company_name)
+    return company_list
+
+
 def get_handyman_by_name(company_name):
 
     return Handyman.query.filter(Handyman.company_name == company_name).first()  
@@ -58,11 +72,11 @@ def get_handyman_by_id(handyman_id):
     return Handyman.query.get(handyman_id)
 
 
-def create_rating(user, movie, score):
+def create_rating(user_id, handyman_id, score):
     """Create and return a new rating."""
 
     #rating = Rating(user=user, score=score, handyman=handyman)
-    rating = Rating(user=user, score=score)
+    rating = Rating(user_id=user_id, handyman_id=handyman_id, score=score)
 
     return rating
 

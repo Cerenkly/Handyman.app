@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ handyman.name }} {% endblock %}
+
+{% block body %}
+<h1>{{ handyman.name }}</h1>
+
+<p>
+  {{ handyman.display_phone }}
+</p>
+
+
+{% if session.get('email') %}
+<h2>Rate your Handyman!</h2>
+<form action="/search_result/{{handyman.id}}/ratings" method="POST">
+  <p>
+    Rating:
+    <select name="rating">
+      <option value="">Select rating</option>
+      {% for num in range(6) %}
+        <option value="{{ num }}">{{ num }}</option>
+      {% endfor %}
+    </select>
+  </p>
+  <p><input type="submit"></p>
+</form>
+{% endif %}
+
+<img class="company_image" src="{{ handyman.image_url }}">
+{% endblock %}

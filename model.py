@@ -172,8 +172,21 @@ def test_query():
     #print("Foreign", a.handyman_id.company_name)
 
     #print("Service Info", Service.query.all())
-    service_obj = Service.query.filter(Service.service_name == "painting").first()
-    print("Found:", service_obj.service_id)
+    #service_obj = Service.query.filter(Service.service_name == "painting").first()
+    #first_handyman = HandymanService.query.filter(HandymanService.service_id == service_obj.service_id).first()
+    #print("Handman's ID", first_handyman.handyman_id)
+    #print("Service ID", service_obj.service_id)
+    #print("Handman's ID", first_handyman.handyman_id)
+
+    all_handyman = Handyman.query.all()
+    #print("handyman", all_handyman.services)
+    for handyman in all_handyman:
+        if handyman.services:
+            service_name = handyman.services[0].service_name
+            #print("Services:", service_name)
+            if service_name == "cleaning":
+                print("handyman:", handyman.company_name)
+    #print("All handymans services:", all_handyman[3].services)
 
 if __name__ == "__main__":
     from server import app
@@ -185,4 +198,4 @@ if __name__ == "__main__":
     connect_to_db(app)
     #db.create_all()
     #test_models()
-    test_query()
+    #test_query()

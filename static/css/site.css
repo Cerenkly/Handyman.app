@@ -1,3 +1,8 @@
+.company_image {
+  height: 400px;
+  width: 400px;
+}
+
 #homepage {
     background-image: url('/static/img/handyman_background.jpeg');
     background-repeat: no-repeat;
