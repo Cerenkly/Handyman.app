@@ -101,7 +101,15 @@
     margin: auto;
     width: 70%;
 }
-  
+
+  .example-input {
+    padding: 9.5px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 50%;
+    background: #f1f1f1;
+  }
   form.example input[type=text] {
     padding: 10px;
     font-size: 17px;
@@ -110,7 +118,6 @@
     width: 50%;
     background: #f1f1f1;
   }
-  
   form.example button {
     float: left;
     width: 20%;
@@ -122,12 +129,24 @@
     border-left: none;
     cursor: pointer;
   }
-  
-  form.example button:hover {
+
+  .example-button {
+    float: left;
+    width: 20%;
+    padding: 10px;
+    background: #2196F3;
+    color: white;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-left: none;
+    cursor: pointer;
+  }
+/* form.example button:hover */
+  .example button:hover {
     background: #0b7dda;
   }
-  
-  form.example::after {
+/* form.example::after */
+  .example::after {
     content: "";
     clear: both;
     display: table;
@@ -266,9 +285,9 @@ form.create-account-input input {
 
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  max-width: 300px;
+  max-width: 600px;
   margin: auto;
-  text-align: center;
+  text-align: left;
   font-family: arial;
 }
 

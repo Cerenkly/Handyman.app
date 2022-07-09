@@ -31,12 +31,13 @@ class Handyman(db.Model):
     zip_code = db.Column(db.Integer) 
     radius = db.Column(db.Float)
     price_per_hour = db.Column(db.Integer)
+    phone_number = db.Column(db.Integer)
     user_id = db.Column(db.Integer,db.ForeignKey("users.user_id"))
 
     user = db.relationship("User", backref=("handyman"), uselist=True)
 
     def __repr__(self):
-        return f"<Handyman handyman_id={self.handyman_id} company_name={self.company_name} zip_code={self.zip_code} radius= {self.radius} price_per_hour{self.price_per_hour}>"
+        return f"<Handyman handyman_id={self.handyman_id} company_name={self.company_name} zip_code={self.zip_code} radius= {self.radius} price_per_hour{self.price_per_hour} phone_number={self.phone_number}>"
 
 
 class HandymanService(db.Model):
@@ -167,26 +168,19 @@ def test_models():
 
 
 def test_query():
-    #a = User.query.first()
-    #print("Handyman Service Info", a.handyman[0].company_name)
-    #print("Foreign", a.handyman_id.company_name)
-
-    #print("Service Info", Service.query.all())
-    #service_obj = Service.query.filter(Service.service_name == "painting").first()
-    #first_handyman = HandymanService.query.filter(HandymanService.service_id == service_obj.service_id).first()
-    #print("Handman's ID", first_handyman.handyman_id)
-    #print("Service ID", service_obj.service_id)
-    #print("Handman's ID", first_handyman.handyman_id)
-
-    all_handyman = Handyman.query.all()
-    #print("handyman", all_handyman.services)
-    for handyman in all_handyman:
-        if handyman.services:
-            service_name = handyman.services[0].service_name
-            #print("Services:", service_name)
-            if service_name == "cleaning":
-                print("handyman:", handyman.company_name)
-    #print("All handymans services:", all_handyman[3].services)
+    #sum = 0
+    #result = Rating.query.filter(Rating.handyman_id == 27).all()
+    #for x in result:
+    #    sum = sum + x.score
+    #    print(x.score)
+    #print("Sum:", sum)
+    #print("Total:", len(result))
+    #print("Average:", sum/len(result))
+    #result = Handyman.query.filter(Rating.handyman_id == 27).all()
+    result = Question(question="How are you")
+    db.session.add(result)
+    db.session.commit()
+    print(result)
 
 if __name__ == "__main__":
     from server import app
@@ -198,4 +192,4 @@ if __name__ == "__main__":
     connect_to_db(app)
     #db.create_all()
     #test_models()
-    #test_query()
+    test_query()

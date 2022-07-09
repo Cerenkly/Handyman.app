@@ -3,28 +3,51 @@
 {% block title %}{{ handyman.name }} {% endblock %}
 
 {% block body %}
-<h1>{{ handyman.name }}</h1>
+<h1>{{ handyman.name }} (Rating: {{rating}})</h1>
 
 <p>
   {{ handyman.display_phone }}
 </p>
 
+<p>
+    {% for review in reviews %}
+        <div>{{review.user.name}}</div>
+        <div>{{review.text}}</div>
+    {% endfor %}
+
+</p>
+
 
 {% if session.get('email') %}
-<h2>Rate your Handyman!</h2>
-<form action="/search_result/{{handyman.id}}/ratings" method="POST">
-  <p>
-    Rating:
-    <select name="rating">
-      <option value="">Select rating</option>
-      {% for num in range(6) %}
-        <option value="{{ num }}">{{ num }}</option>
-      {% endfor %}
-    </select>
-  </p>
-  <p><input type="submit"></p>
-</form>
+  {% if display %}
+    <h2>Rate your Handyman!</h2>
+    <form action="/search_result/{{handyman.id}}/ratings" method="POST">
+      <p>
+        Rating:
+        <select name="rating">
+          <option value="">Select rating</option>
+          {% for num in range(6) %}
+            <option value="{{ num }}">{{ num }}</option>
+          {% endfor %}
+        </select>
+      </p>
+      <p><input type="submit"></p>
+    </form>
+  {% else %}
+    <h2>You Rated This Handyman {{score}}/5</h2>
+  {% endif %}
 {% endif %}
 
 <img class="company_image" src="{{ handyman.image_url }}">
+<!--
+{% if session.get('email') %}
+  <form action="/search_result/{{handyman.id}}/question" method="POST">
+    <p><label for="question">Ask a Question:</label></p>
+    <textarea id="question" name="question" rows="4" cols="50"></textarea>
+    <br>
+    <input type="submit" value="Submit">
+  </form>
+
+{% endif %}
+-->
 {% endblock %}

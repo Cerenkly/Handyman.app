@@ -31,17 +31,29 @@ def get_user_by_email(email):
 
     return User.query.filter(User.email == email).first()    
 
-def create_handyman(company_name, price_per_hour, radius, zip_code, user_id): 
+def create_handyman(company_name, price_per_hour, radius, zip_code, phone_number, user_id): 
 
     handyman = Handyman(
         company_name=company_name,
         price_per_hour=price_per_hour,
         radius=radius,
         zip_code=zip_code,
+        phone_number= phone_number,
         user_id=user_id
     )
 
     return handyman    
+
+def create_yelp_handyman(company_name, zip_code): 
+
+    handyman = Handyman(
+        company_name=company_name,
+        radius=160000,
+        zip_code=zip_code,
+    )
+
+    return handyman    
+
 
 def get_handymans():
 
@@ -61,6 +73,21 @@ def get_company_by_service_name(service_name):
     return company_list
 
 
+def get_handyman_by_service_name(service_name):
+
+    handyman_list = []
+    all_handyman = get_handymans()
+    for handyman in all_handyman:
+        #if not empty list
+        if handyman.services:
+            service_name_result = handyman.services[0].service_name
+            #print("Services:", service_name)
+            if service_name_result == service_name:
+                handyman_list.append(handyman)
+    
+    return handyman_list
+
+
 def get_handyman_by_name(company_name):
 
     return Handyman.query.filter(Handyman.company_name == company_name).first()  
@@ -78,6 +105,24 @@ def create_rating(user_id, handyman_id, score):
     #rating = Rating(user=user, score=score, handyman=handyman)
     rating = Rating(user_id=user_id, handyman_id=handyman_id, score=score)
 
+    return rating
+
+def create_question(user_id, handyman_id, question):
+    """Create and return a new question."""
+
+    question = Question(user_id=user_id, handyman_id=handyman_id, question=question)
+
+    return question
+
+def create_answer(handyman_id, question_id, answer):
+    """Create and return a new answer."""
+
+    answer = Answer(handyman_id=handyman_id, question_id=question_id, answer=answer)
+
+    return answer
+
+def get_rating_by_handyman_id(handyman_id):
+    rating = Rating.query.filter(Rating.handyman_id == handyman_id).all()
     return rating
 
 

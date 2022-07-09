@@ -11,7 +11,11 @@
             <li>{{index.name}}</li>
         </a>
     {% endfor %}
-      
+    {% for index in handyman_list_html_db %}
+        <a href="/search_result/{{index.handyman_id}}">
+            <li>{{index.company_name}}</li>
+        </a>
+{% endfor %} 
 </ol>
 
 {% endblock %}

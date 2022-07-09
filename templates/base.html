@@ -6,7 +6,6 @@
     <title>
       {% block title %}{% endblock %}
     </title>
-
     {% block head %}{% endblock %}
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -30,12 +29,12 @@
       <div class="login-container">
     
         {% if session.get('email') %}
-          <div>Welcome {{session.get('email')}}</div>
+          <span class="nav-link">Welcome {{session.get('email')}}</span>
           <form class="inline" action="/logout">
             <button class="button-topnav" type="submit">Log Out</button>
           </form>
           {% if session.get('company_name') %}
-            <span class="company">{{session.get('company_name')}}</span>
+            <span class="nav-link">{{session.get('company_name')}}</span>
           {% else %}
             <form class="inline" action="/handyman_account">
               <button class="button-topnav" type="submit">Become a Handyman</button>
@@ -82,6 +81,9 @@
     {% endblock %}
 
     {% block after_body %}{% endblock %}
+
+    {% block js %}
+    {% endblock %}
   </body>
 </html>
 
