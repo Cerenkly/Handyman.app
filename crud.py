@@ -99,11 +99,11 @@ def get_handyman_by_id(handyman_id):
     return Handyman.query.get(handyman_id)
 
 
-def create_rating(user_id, handyman_id, score):
+def create_rating(user_id, handyman_id, reviews, score):
     """Create and return a new rating."""
 
     #rating = Rating(user=user, score=score, handyman=handyman)
-    rating = Rating(user_id=user_id, handyman_id=handyman_id, score=score)
+    rating = Rating(user_id=user_id, handyman_id=handyman_id, reviews=reviews, score=score)
 
     return rating
 

@@ -28,7 +28,7 @@ class Handyman(db.Model):
 
     handyman_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     company_name = db.Column(db.String(25))
-    zip_code = db.Column(db.Integer) 
+    zip_code = db.Column(db.Integer)
     radius = db.Column(db.Float)
     price_per_hour = db.Column(db.Integer)
     phone_number = db.Column(db.Integer)
@@ -89,6 +89,7 @@ class Rating(db.Model):
 
     rating_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     score = db.Column(db.Integer)
+    reviews = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     handyman_id = db.Column(db.Integer, db.ForeignKey("handymans.handyman_id"))
 
@@ -96,7 +97,7 @@ class Rating(db.Model):
     user = db.relationship("User", backref="ratings")
 
     def __repr__(self):
-        return f"<Rating rating_id={self.rating_id} score={self.score}>"
+        return f"<Rating rating_id={self.rating_id} score={self.score} reviews={self.reviews}>"
 
 
 class Question(db.Model):
@@ -177,7 +178,7 @@ def test_query():
     #print("Total:", len(result))
     #print("Average:", sum/len(result))
     #result = Handyman.query.filter(Rating.handyman_id == 27).all()
-    result = Question(question="How are you")
+    result = Rating(reviews="great job", score=5)
     db.session.add(result)
     db.session.commit()
     print(result)
@@ -192,4 +193,4 @@ if __name__ == "__main__":
     connect_to_db(app)
     #db.create_all()
     #test_models()
-    test_query()
+    #test_query()

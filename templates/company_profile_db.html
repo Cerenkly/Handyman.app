@@ -10,6 +10,7 @@
   {{handyman.phone_number}}
 </p>
 
+
 {% if session.get('email') %}
   {% if display %}
     <h2>Rate your Handyman!</h2>
@@ -22,12 +23,23 @@
             <option value="{{ num }}">{{ num }}</option>
           {% endfor %}
         </select>
+        <p><label for="review">Post a review!</label></p>
+        <textarea id="review" name="reviews" rows="4" cols="50"></textarea>
       </p>
       <p><input type="submit"></p>
     </form>
   {% else %}
     <h2>You Rated This Handyman {{score}}/5</h2>
   {% endif %}
+{% endif %}
+
+{% if session.get('email') %}
+  {% for rating in reviews %}
+    {% if rating.reviews %}
+      <div>{{rating.user.first_name}}</div>
+      <div>{{rating.reviews}}</div>
+    {% endif %}
+  {% endfor %}
 {% endif %}
 
 <img class="company_image" src="/static/img/handyman_background.jpeg">

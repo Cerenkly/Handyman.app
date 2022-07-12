@@ -22,6 +22,16 @@ def homepage():
     #return render_template("homepage.html", user_email = user_email)
     return render_template("homepage.html")
 
+@app.route("/about")
+def about():
+
+    return render_template("about.html")
+
+@app.route("/contact")
+def contact():
+
+    return render_template("contact.html")
+
 @app.route("/logout")
 def logout():
     session["email"] = {}
@@ -201,7 +211,7 @@ def react_db_call():
     dict = {}
     count = 0
     for handyman in all_handymans_in_db:
-        dict[count] = {"name" : handyman.company_name, "id" : handyman.handyman_id}
+        dict[count] = {"name" : handyman.company_name, "id" : handyman.handyman_id, "zip_code" : handyman.zip_code, "radius" : handyman.radius}
         count = count+1
 
     return dict
@@ -211,11 +221,12 @@ def react_db_call():
 def react_api_call():
     #search_input = request.args.get("search")
     search_input = request.get_json().get("service")
+    zip_code = request.get_json().get("zip_code")
 
     handyman_list = []
     headers = {'Authorization': f"Bearer {os.environ['YELP_MASTER_KEY']}"}
     url='https://api.yelp.com/v3/businesses/search'
-    payload = {'location' : '92110',
+    payload = {'location' : zip_code,
                 'radius' : 20000,
                 'categories' : 'handyman, homecleaning, movers, painters, All',
                 'term' : search_input}
@@ -280,8 +291,10 @@ def show_company_profile(id):
     
    
     average="No rating"
+    rating = None
     if handyman:
         rating = crud.get_rating_by_handyman_id(handyman.handyman_id)
+    
 
         if rating:
             sum = 0
@@ -293,7 +306,7 @@ def show_company_profile(id):
 
     display = 1
     score = -1
-    #return render_template("test.html", test=handyman)
+    #return render_template("test.html", test=rating)
 
     if handyman:
         if current_user_obj:
@@ -307,7 +320,7 @@ def show_company_profile(id):
     if yelp:
         return render_template("company_profile.html", handyman=data, rating=average, display=display, score=score, reviews=reviews_data["reviews"])
     else:
-        return render_template("company_profile_db.html", handyman=handyman, rating=average, current_user_obj=current_user_obj, display=display, score=score)
+        return render_template("company_profile_db.html", handyman=handyman, rating=average, current_user_obj=current_user_obj, display=display, score=score, reviews=rating)
 
 @app.route("/search_result/<id>/reviews")
 def show_company_reviews(id):
@@ -349,7 +362,8 @@ def create_rating(handyman_id):
 
     logged_in_email = session.get("email")
     rating_score = request.form.get("rating")
-
+    reviews = request.form.get("reviews")
+    #return render_template("test.html", test=review)
     if logged_in_email is None:
         flash("You must log in to rate a handyman.")
     elif not rating_score:
@@ -381,7 +395,7 @@ def create_rating(handyman_id):
             #handyman= crud.get_handyman_by_name(yelp_handyman["name"])
 
         #return render_template("test.html", test=handyman.user_id)
-        rating = crud.create_rating(user.user_id, handyman.handyman_id, int(rating_score))
+        rating = crud.create_rating(user.user_id, handyman.handyman_id, reviews, int(rating_score))
         db.session.add(rating)
         db.session.commit()
 
