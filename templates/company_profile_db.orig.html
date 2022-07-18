@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ handyman.company_name }} {% endblock %}
+
+{% block body %}
+<h1>{{ handyman.company_name }} (Rating: {{rating}})</h1>
+
+
+<p>
+  {{handyman.phone_number}}
+</p>
+
+
+{% if session.get('email') %}
+  {% if display %}
+    <h2>Rate your Handyman!</h2>
+    <form action="/search_result/{{handyman.handyman_id}}/ratings" method="POST">
+      <p>
+        Rating:
+        <select name="rating">
+          <option value="">Select rating</option>
+          {% for num in range(6) %}
+            <option value="{{ num }}">{{ num }}</option>
+          {% endfor %}
+        </select>
+        <p><label for="review">Post a review!</label></p>
+        <textarea id="review" name="reviews" rows="4" cols="50"></textarea>
+      </p>
+      <p><input type="submit"></p>
+    </form>
+  {% else %}
+    <h2>You Rated This Handyman {{score}}/5</h2>
+  {% endif %}
+{% endif %}
+
+{% if session.get('email') %}
+  {% for rating in reviews %}
+    {% if rating.reviews %}
+      <div>{{rating.user.first_name}}</div>
+      <div>{{rating.reviews}}</div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<img class="company_image" src="/static/img/handyman_background.jpeg">
+{% if current_user_obj %}
+  {% if handyman.user_id != current_user_obj.user_id %}
+    {% if session.get('email') %}
+      <form action="/search_result/{{handyman.handyman_id}}/question" method="POST">
+        <p><label for="question">Ask a Question:</label></p>
+        <textarea id="question" name="question" rows="4" cols="50"></textarea>
+        <br>
+        <input type="submit" value="Submit">
+      </form>
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+<p>
+  {% if handyman.questions %}
+    {% for question in handyman.questions %}
+      <li>{{question.question}}</li>
+      {% if question.answers %}
+        {% for answer in question.answers %}
+          <div style="text-indent: 2em;">{{answer.answer}}</div>
+        {% endfor %}
+      {% endif %}
+      {% if handyman.user_id == current_user_obj.user_id %}
+        <form action="/search_result/{{handyman.handyman_id}}/{{question.question_id}}/answer" method="POST">
+          <p><label for="answer">Reply:</label></p>
+          <textarea id="answer" name="answer_{{question.question_id}}" rows="4" cols="50"></textarea>
+          <br>
+          <input type="submit" value="Submit">
+        </form>
+        <br>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+</p>
+
+{% endblock %}

@@ -3,51 +3,78 @@
 {% block title %}{{ handyman.name }} {% endblock %}
 
 {% block body %}
-<h1>{{ handyman.name }} (Rating: {{rating}})</h1>
+<h1 class="align-center">{{ handyman.name }} (Rating: {{rating}})</h1>
 
-<p>
-  {{ handyman.display_phone }}
-</p>
 
-<p>
+<div class="container">
+
+  <div class="row">
+    <div class="col">
+      <div class="card-group">
+        <div class="card">
+          <img src={{ handyman.image_url }} class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Price: Not Available</h5>
+            <h5 class="card-title">Phone:{{ handyman.display_phone }}</h5>
+            {% for service in handyman.categories %}
+              <h5 class="card-title">Service Provided: {{service.title}}</h5>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="center">
+          <img src="/static/img/handyman_background.jpeg" alt="Avatar" class="center-image avatar">
+          {% if session.get('email') %}
+            {% if display %}
+              <h2>Rate your Handyman!</h2>
+              <form action="/search_result/{{handyman.id}}/ratings" method="POST">
+                <p>
+                  Rating:
+                  <select name="rating">
+                    <option value="">Select rating</option>
+                    {% for num in range(6) %}
+                      <option value="{{ num }}">{{ num }}</option>
+                    {% endfor %}
+                  </select>
+                  <p><label for="review">Post a review!</label></p>
+                  <textarea id="review" name="reviews" rows="4" cols="50"></textarea>
+                </p>
+                <p><input type="submit"></p>
+              </form>
+            {% else %}
+              <h2>You Rated This Handyman {{score}}/5</h2>
+            {% endif %}
+          {% endif %}
+    </div>
+  </div>
+</div>
+<br>
+<h4 class="align-center w3-round-xlarge">Reviews:</h4>
     {% for review in reviews %}
-        <div>{{review.user.name}}</div>
-        <div>{{review.text}}</div>
+      <div class="card text-bg-primary mb-3" style="max-width: 80rem;">
+        <div class="card-header">{{review.user.name}}</div>
+        <div class="card-body">
+          <p class="card-text">{{review.text}}</p>
+        </div>
+      </div>
     {% endfor %}
-
-</p>
-
-
-{% if session.get('email') %}
-  {% if display %}
-    <h2>Rate your Handyman!</h2>
-    <form action="/search_result/{{handyman.id}}/ratings" method="POST">
-      <p>
-        Rating:
-        <select name="rating">
-          <option value="">Select rating</option>
-          {% for num in range(6) %}
-            <option value="{{ num }}">{{ num }}</option>
-          {% endfor %}
-        </select>
-      </p>
-      <p><input type="submit"></p>
-    </form>
-  {% else %}
-    <h2>You Rated This Handyman {{score}}/5</h2>
-  {% endif %}
-{% endif %}
-
-<img class="company_image" src="{{ handyman.image_url }}">
-<!--
-{% if session.get('email') %}
-  <form action="/search_result/{{handyman.id}}/question" method="POST">
-    <p><label for="question">Ask a Question:</label></p>
-    <textarea id="question" name="question" rows="4" cols="50"></textarea>
-    <br>
-    <input type="submit" value="Submit">
-  </form>
-
-{% endif %}
--->
+    {% if reviews_db %}
+      {% for rating in reviews_db %}
+        {% if rating.reviews %}
+          <div class="card text-bg-primary mb-3" style="max-width: 80rem;">
+            <div class="card-header">{{rating.user.first_name}}</div>
+            <div class="card-body">
+              <p class="card-text">{{rating.reviews}}</p>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
 {% endblock %}
+
+{% block js %}
+  <script src="/static/js/company_profile.js"></script>
+{% endblock %}
+

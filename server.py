@@ -1,9 +1,12 @@
+# from tkinter import N
 from flask import Flask, render_template, request, flash, session, redirect, jsonify
 from model import connect_to_db, db
 import crud
 import os
 import requests
 from jinja2 import StrictUndefined
+import haversine as hs
+from haversine import Unit
 
 app = Flask(__name__)
 app.secret_key = "dev"
@@ -41,12 +44,18 @@ def logout():
 
 @app.route("/users", methods=["POST"])
 def register_user():
-    first_name = request.form.get("first_name")
-    last_name = request.form.get("last_name")
-    user_address = request.form.get("user_address")
-    email = request.form.get("email")
+    # first_name = request.form.get("first_name")
+    # last_name = request.form.get("last_name")
+    # user_address = request.form.get("user_address")
+    # email = request.form.get("email")
+    # password = request.form.get("password")
+
+    first_name = request.get_json().get("first_name")
+    last_name = request.get_json().get("last_name")
+    user_address = request.get_json().get("address")
+    email = request.get_json().get("email")
     session["email"] = email
-    password = request.form.get("password")
+    password = request.get_json().get("password")
     
     user = crud.get_user_by_email(email)
 
@@ -58,7 +67,7 @@ def register_user():
         db.session.commit()
         #flash("Account created! Please log in.")
 
-    return redirect("/")   
+    return jsonify({"success": True})
 
 @app.route("/login", methods=["POST"])
 def process_login():
@@ -189,7 +198,9 @@ def api_call():
     #data = response.json()
     #return render_template("test.html", test=data["businesses"])
     data = response.json()
-    #print(data)
+    print('\n'*5)
+    print(data)
+    print('\n'*5)
 
     #print(data["businesses"])
     #for dict in data["businesses"]:
@@ -207,12 +218,54 @@ def api_call():
 @app.route("/db/search_result", methods=["POST"])
 def react_db_call():
     search_input = request.get_json().get("service")
+    zip_code = request.get_json().get("zip_code")
+    lat, lng = None, None
+    base_url = "https://maps.googleapis.com/maps/api/geocode/json"
+    endpoint = f"{base_url}?address={zip_code}&key={os.environ['Google_map_key']}"
+    r = requests.get(endpoint)
+    if r.status_code not in range(200, 299):
+        return None, None
+    try:
+        '''
+        This try block incase any of our inputs are invalid. This is done instead
+        of actually writing out handlers for all kinds of responses.
+        '''
+        results = r.json()['results'][0]
+        lat = results['geometry']['location']['lat']
+        lng = results['geometry']['location']['lng']
+    except:
+        pass
+    search_loc = (lat,lng)
+    
+    # loc1=(28.426846,77.088834)
+    # loc2=(28.394231,77.050308)
+    # hs.haversine(loc1,loc2,unit=Unit.MILES)
+
     all_handymans_in_db= crud.get_handyman_by_service_name(search_input)
     dict = {}
     count = 0
     for handyman in all_handymans_in_db:
-        dict[count] = {"name" : handyman.company_name, "id" : handyman.handyman_id, "zip_code" : handyman.zip_code, "radius" : handyman.radius}
-        count = count+1
+        hLat, hLng = None, None
+        base_url = "https://maps.googleapis.com/maps/api/geocode/json"
+        endpoint = f"{base_url}?address={handyman.zip_code}&key={os.environ['Google_map_key']}"
+        r = requests.get(endpoint)
+        if r.status_code not in range(200, 299):
+            return None, None
+        try:
+            '''
+            This try block incase any of our inputs are invalid. This is done instead
+            of actually writing out handlers for all kinds of responses.
+            '''
+            hResults = r.json()['results'][0]
+            hLat = hResults['geometry']['location']['lat']
+            hLng = hResults['geometry']['location']['lng']
+        except:
+            pass
+        handyman_loc = (hLat,hLng)
+        distance = hs.haversine(search_loc,handyman_loc,unit=Unit.MILES)
+        if distance < 100:
+            dict[count] = {"name" : handyman.company_name, "id" : handyman.handyman_id, "zip_code" : handyman.zip_code, "radius" : handyman.radius, "lat" : hLat, "lng" : hLng}
+            count = count+1
 
     return dict
     #return jsonify({"success": True})
@@ -233,6 +286,9 @@ def react_api_call():
 
     response = requests.get(url, params=payload, headers=headers)
     data = response.json()
+    print('\n'*5)
+    print(data)
+    print('\n'*5)
     return data
     #return render_template("test.html", test=data["businesses"])
 
@@ -242,12 +298,11 @@ def react_api_call():
 
     #print(handyman_list)
     #handyman_list.extend(company_list_db)
-    session["yelp_results"] = data["businesses"]
+    # session["yelp_results"] = data["businesses"]
 
-    all_handymans_in_db= crud.get_handyman_by_service_name(search_input)
-    #return render_template("test.html", test=test)
+    # all_handymans_in_db= crud.get_handyman_by_service_name(search_input)
 
-    return render_template("search_results.html", handyman_list_html=data["businesses"], handyman_list_html_db=all_handymans_in_db)
+    # return render_template("search_results.html", handyman_list_html=data["businesses"], handyman_list_html_db=all_handymans_in_db)
 
 @app.route("/search_result/<id>")
 def show_company_profile(id):
@@ -301,7 +356,7 @@ def show_company_profile(id):
             for x in rating:
                 sum = sum + x.score
     
-            average = sum/len(rating)
+            average = round(sum/len(rating), 1)
             #return render_template("test.html", test=average)
 
     display = 1
@@ -318,7 +373,8 @@ def show_company_profile(id):
 
     #return render_template("test.html", test=current_user_obj)
     if yelp:
-        return render_template("company_profile.html", handyman=data, rating=average, display=display, score=score, reviews=reviews_data["reviews"])
+        #return render_template("test.html", test=data)
+        return render_template("company_profile.html", handyman=data, rating=average, display=display, score=score, reviews=reviews_data["reviews"], reviews_db=rating)
     else:
         return render_template("company_profile_db.html", handyman=handyman, rating=average, current_user_obj=current_user_obj, display=display, score=score, reviews=rating)
 

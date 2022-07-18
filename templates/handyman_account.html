@@ -2,7 +2,54 @@
 {% block title %}Handyman Home{% endblock %}
 {% block body %}
 
-  <h2>Create an Handyman Account</h2>
+
+<section class="forms-section">
+    <!-- <h1 class="section-title">Create Handyman Account</h1> -->
+    <div id="create-handyman-form" class="form-wrapper is-active">
+      <!-- <button id="create-handyman" type="button" class="switcher switcher-signup">
+        Create Handyman 
+        <span class="underline"></span>
+      </button> -->
+      <form action="/create_handyman" class="form form-signup"  method="POST">
+        <fieldset>
+          <legend>Please, enter your email, password and password confirmation for sign up.</legend>
+          <div class="input-block">
+            <label for="company_name">Company Name</label>
+            <input name="company_name" id="company_name" type="text" required>
+          </div>
+          <div class="input-block">
+            <label for="price_per_hour">Price Per Hour</label>
+            <input name="price_per_hour" id="price_per_hour" type="integer" required>
+          </div>
+          <div class="input-block">
+            <label for="radius">Radius</label>
+            <input name= "radius" id="radius" type="integer" required>
+          </div>
+          <div class="input-block">
+            <label for="zip_code">Zip Code</label>
+            <input name= "zip_code" id="zip_code" type="integer" required>
+          </div>
+          <div class="input-block">
+            <label for="phone_number">Phone Number</label>
+            <input name= "phone_number" id="phone_number" type="text" required>
+          </div>
+        </fieldset>
+
+        <h1 class="select-service">Services</h1>
+        <input type="checkbox" name="cleaning" value="cleaning">
+        <label class="select-service" for="service_name"> Cleaning</label><br>
+        <input type="checkbox" name="moving" value="moving">
+        <label class="select-service" for="service_name"> Moving</label><br>
+        <input type="checkbox" name="painting" value="painting">
+        <label class="select-service" for="service_name"> Painting</label><br>
+
+        <button type="submit" class="btn-signup">Create Handyman</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+  <!-- <h2>Create an Handyman Account</h2>
   <form action="/create_handyman" class="handyman-account-input" method="POST">
     <p>
       Company_name <input type="text" name="company_name">
@@ -31,7 +78,7 @@
     <p>
       <input type="submit">
     </p>
-  </form>
+  </form> -->
 
 <!--
   <form action = "/post-form-data" method="POST" enctype="multipart/form-data">

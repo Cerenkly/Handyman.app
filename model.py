@@ -178,9 +178,21 @@ def test_query():
     #print("Total:", len(result))
     #print("Average:", sum/len(result))
     #result = Handyman.query.filter(Rating.handyman_id == 27).all()
-    result = Rating(reviews="great job", score=5)
-    db.session.add(result)
-    db.session.commit()
+    # result = Rating(reviews="great job", score=5)
+    # db.session.add(result)
+    # db.session.commit()
+    service_name = "painting"
+    handyman_list = []
+    all_handyman = Handyman.query.all()
+    for handyman in all_handyman:
+        #if not empty list
+        if handyman.services:
+            service_name_result = handyman.services[0].service_name
+            #print("Services:", service_name)
+            if service_name_result == service_name:
+                handyman_list.append(handyman)
+    
+    result = handyman_list
     print(result)
 
 if __name__ == "__main__":
