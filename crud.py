@@ -80,12 +80,13 @@ def get_handyman_by_service_name(service_name):
     for handyman in all_handyman:
         #if not empty list
         if handyman.services:
-            service_name_result = handyman.services[0].service_name
-            #print("Services:", service_name)
-            if service_name_result == service_name:
-                handyman_list.append(handyman)
-    
+            for service in handyman.services:
+                if service.service_name == service_name:
+                    #print("Services:", service_name)
+                    #if service_name_result == service_name:
+                    handyman_list.append(handyman)
     return handyman_list
+
 
 
 def get_handyman_by_name(company_name):

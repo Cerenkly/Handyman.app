@@ -47,11 +47,11 @@
               <h2>You Rated This Handyman {{score}}/5</h2>
             {% endif %}
           {% endif %}
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<br>
-<h4 class="align-center w3-round-xlarge">Reviews:</h4>
+    <br>
+    <h4 class="align-center w3-round-xlarge">Reviews:</h4>
     {% for review in reviews %}
       <div class="card text-bg-primary mb-3" style="max-width: 80rem;">
         <div class="card-header">{{review.user.name}}</div>

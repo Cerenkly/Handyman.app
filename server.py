@@ -95,6 +95,7 @@ def process_login():
             #flash(f"Welcome back, {user.email}!")
             session["company_name"] = company_name
             session["price_per_hour"]=price_per_hour
+            session["handyman_id"]=handyman_id
             #session["service_names"]=service_names
             #session["phone_number"]=phone_number
 
@@ -172,6 +173,7 @@ def register_handyman():
         session["price_per_hour"]=price_per_hour
         session["service_names"]=service_names
         session["phone_number"]=phone_number
+        session["handy_id"]=handy_id
         return render_template("handyman_profile.html", company_name=company_name, price_per_hour=price_per_hour, service_names=service_names, phone_number=phone_number)
 
 
@@ -376,6 +378,7 @@ def show_company_profile(id):
         #return render_template("test.html", test=data)
         return render_template("company_profile.html", handyman=data, rating=average, display=display, score=score, reviews=reviews_data["reviews"], reviews_db=rating)
     else:
+        #return render_template("test.html", test=handyman, handyman=handyman, current_user_obj=current_user_obj)
         return render_template("company_profile_db.html", handyman=handyman, rating=average, current_user_obj=current_user_obj, display=display, score=score, reviews=rating)
 
 @app.route("/search_result/<id>/reviews")
@@ -498,6 +501,65 @@ def answer(handyman_id, question_id):
     db.session.commit()
     return redirect(f"/search_result/{handyman_id}")
     #return render_template("test.html", test=answer)
+
+
+@app.route("/db/search_test", methods=["POST"])
+def test_call():
+    # search_input = request.get_json().get("service")
+    # zip_code = request.get_json().get("zip_code")
+    search_input = "cleaning"
+    zip_code = 92126
+    lat, lng = None, None
+    base_url = "https://maps.googleapis.com/maps/api/geocode/json"
+    endpoint = f"{base_url}?address={zip_code}&key={os.environ['Google_map_key']}"
+    r = requests.get(endpoint)
+    if r.status_code not in range(200, 299):
+        return None, None
+    try:
+        '''
+        This try block incase any of our inputs are invalid. This is done instead
+        of actually writing out handlers for all kinds of responses.
+        '''
+        results = r.json()['results'][0]
+        lat = results['geometry']['location']['lat']
+        lng = results['geometry']['location']['lng']
+    except:
+        pass
+    search_loc = (lat,lng)
+    
+    # loc1=(28.426846,77.088834)
+    # loc2=(28.394231,77.050308)
+    # hs.haversine(loc1,loc2,unit=Unit.MILES)
+
+    all_handymans_in_db= crud.get_handyman_by_service_name(search_input)
+    dict = {}
+    count = 0
+    for handyman in all_handymans_in_db:
+        hLat, hLng = None, None
+        base_url = "https://maps.googleapis.com/maps/api/geocode/json"
+        endpoint = f"{base_url}?address={handyman.zip_code}&key={os.environ['Google_map_key']}"
+        r = requests.get(endpoint)
+        if r.status_code not in range(200, 299):
+            return None, None
+        try:
+            '''
+            This try block incase any of our inputs are invalid. This is done instead
+            of actually writing out handlers for all kinds of responses.
+            '''
+            hResults = r.json()['results'][0]
+            hLat = hResults['geometry']['location']['lat']
+            hLng = hResults['geometry']['location']['lng']
+        except:
+            pass
+        handyman_loc = (hLat,hLng)
+        distance = hs.haversine(search_loc,handyman_loc,unit=Unit.MILES)
+        if distance > 100:
+            dict[count] = {"name" : handyman.company_name, "id" : handyman.handyman_id, "zip_code" : handyman.zip_code, "radius" : handyman.radius, "lat" : hLat, "lng" : hLng}
+            count = count+1
+
+    return render_template("test.html", test=all_handymans_in_db)
+
+
 
 if __name__ == "__main__":
     connect_to_db(app)

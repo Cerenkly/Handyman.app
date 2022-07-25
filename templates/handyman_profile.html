@@ -20,7 +20,7 @@
 {% block body %}
 <h2 style="text-align:center">Handyman Profile Card</h2>
 
-<div class="card">
+<div class="card pad-10">
   <img class="center-image" src="/static/img/profile-icon-png-899.png" alt="Best Handyman" style="width:10%">
   <h1>{{company_name}}</h1>
   <p class="title">Specialties: {{service_names}}</p>
@@ -31,8 +31,14 @@
     <a href="#"><i class="fa fa-linkedin"></i></a>  
     <a href="#"><i class="fa fa-facebook"></i></a> 
   </div>
-  <p><button>Contact</button></p>
+  <p><button>Contact</button><button name="{{session.get('handyman_id')}}" class="profile-button">Go to Company</a></button></p>
 </div>
 
+<!-- <form action = "/db/search_test" method="POST">
+  <input type="submit">
+</form> -->
+{% endblock %}
+{% block js %}
+  <script src="/static/js/handyman_profile.js"></script>
 {% endblock %}
  

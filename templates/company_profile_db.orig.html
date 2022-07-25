@@ -33,14 +33,19 @@
   {% endif %}
 {% endif %}
 
-{% if session.get('email') %}
-  {% for rating in reviews %}
-    {% if rating.reviews %}
-      <div>{{rating.user.first_name}}</div>
-      <div>{{rating.reviews}}</div>
-    {% endif %}
-  {% endfor %}
-{% endif %}
+  <h4 class="align-center w3-round-xlarge">Reviews:</h4>    
+  {% if session.get('email') %}
+    {% for rating in reviews %}
+      {% if rating.reviews %}
+      <div class="card text-bg-primary mb-3" style="max-width: 80rem;">
+        <div class="card-header">{{rating.user.first_name}}</div>
+        <div class="card-body">
+          <p class="card-text">{{rating.reviews}}</p>          
+        </div>
+      </div>  
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 
 <img class="company_image" src="/static/img/handyman_background.jpeg">
 {% if current_user_obj %}

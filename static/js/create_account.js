@@ -40,3 +40,6 @@ document.querySelector('#continue').addEventListener('click', function() {
 function goHome() {
 	location.replace("/");
 }
+
+// const element = document.documentElement;
+// element.classList.add("mystyle");

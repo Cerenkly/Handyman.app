@@ -16,6 +16,7 @@ function codeAddress(zipCode) {
     if (status == google.maps.GeocoderStatus.OK) {
       //Got result, center the map and put it out there
       basicMap.setCenter(results[0].geometry.location);
+      basicMap.setZoom(11);
       
       // var marker = new google.maps.Marker({
       //     map: map,
@@ -38,9 +39,6 @@ function addYelpMarker(markerResults) {
         position: coord,
         title: result.name,
         map: basicMap,
-        label: {
-          fontSize: "8px"
-        },
         icon: {
           // custom icon
           url: '/static/img/handyman_background.jpeg',
@@ -49,12 +47,13 @@ function addYelpMarker(markerResults) {
             height: 30,
           },
         },
+        mykey: result.id,
       }),
     );
   }
   for (const marker of markers) {
       const markerInfo = `
-        <h1>${marker.title}</h1>
+        <h5><a href="/search_result/${marker.mykey}">${marker.title}</a></h5>
       `;
   
       const infoWindow = new google.maps.InfoWindow({
@@ -65,7 +64,7 @@ function addYelpMarker(markerResults) {
       marker.addListener('click', () => {
         infoWindow.open(basicMap, marker);
       });
-    }
+  }
 }
 
 function addDBMarker(markerResults) {
@@ -94,28 +93,27 @@ function addDBMarker(markerResults) {
                 height: 30,
               },
             },
+            // mykey: result.id,
           }),
         );
       }
     });
-    
         
   }
-
   for (const marker of markers) {
-      const markerInfo = `
-        <h1>${marker.title}</h1>
-      `;
-  
-      const infoWindow = new google.maps.InfoWindow({
-        content: markerInfo,
-        maxWidth: 200,
-      });
-  
-      marker.addListener('click', () => {
-        infoWindow.open(basicMap, marker);
-      });
-    }
+    const markerInfo = `
+      <h5>${marker.title}</h5>
+    `;
+
+    const infoWindow = new google.maps.InfoWindow({
+      content: markerInfo,
+      maxWidth: 200,
+    });
+
+    marker.addListener('click', () => {
+      infoWindow.open(basicMap, marker);
+    });
+  }
 }
 
 var geocoder; //To use later
@@ -123,76 +121,76 @@ var basicMap; //Your map
 function initMap() {
     // Code that works with Google Maps here
     geocoder = new google.maps.Geocoder();
-    const sfBayCoords = {
-        lat: 37.601773,
-        lng: -122.20287,
+    const USCoords = {
+        lat: 39.8097343,
+        lng: -98.5556199,
     };
       
     basicMap = new google.maps.Map(document.querySelector('#maps'), {
-        center: sfBayCoords,
-        zoom: 11,
+        center: USCoords,
+        zoom: 4,
     });
 
     //Locations
-    const locations = [
-        {
-          name: 'Hackbright Academy',
-          coords: {
-            lat: 37.7887459,
-            lng: -122.4115852,
-          },
-        },
-        {
-          name: 'Powell Street Station',
-          coords: {
-            lat: 37.7844605,
-            lng: -122.4079702,
-          },
-        },
-        {
-          name: 'Montgomery Station',
-          coords: {
-            lat: 37.7894094,
-            lng: -122.4013037,
-          },
-        },
-    ];
-    const markers = [];
-    for (const location of locations) {
-      markers.push(
-        new google.maps.Marker({
-          position: location.coords,
-          title: location.name,
-          map: basicMap,
-          icon: {
-            // custom icon
-            url: '/static/img/handyman_background.jpeg',
-            scaledSize: {
-              width: 30,
-              height: 30,
-            },
-          },
-        }),
-      );
-    }
-    for (const marker of markers) {
-        const markerInfo = `
-          <h1>${marker.title}</h1>
-          <p>
-            Located at: <code>${marker.position.lat()}</code>,
-            <code>${marker.position.lng()}</code>
-          </p>
-        `;
+    // const locations = [
+    //     {
+    //       name: 'Hackbright Academy',
+    //       coords: {
+    //         lat: 37.7887459,
+    //         lng: -122.4115852,
+    //       },
+    //     },
+    //     {
+    //       name: 'Powell Street Station',
+    //       coords: {
+    //         lat: 37.7844605,
+    //         lng: -122.4079702,
+    //       },
+    //     },
+    //     {
+    //       name: 'Montgomery Station',
+    //       coords: {
+    //         lat: 37.7894094,
+    //         lng: -122.4013037,
+    //       },
+    //     },
+    // ];
+    // const markers = [];
+    // for (const location of locations) {
+    //   markers.push(
+    //     new google.maps.Marker({
+    //       position: location.coords,
+    //       title: location.name,
+    //       map: basicMap,
+    //       icon: {
+    //         // custom icon
+    //         url: '/static/img/handyman_background.jpeg',
+    //         scaledSize: {
+    //           width: 30,
+    //           height: 30,
+    //         },
+    //       },
+    //     }),
+    //   );
+    // }
+    // for (const marker of markers) {
+    //     const markerInfo = `
+    //       <h1>${marker.title}</h1>
+    //       <p>
+    //         Located at: <code>${marker.position.lat()}</code>,
+    //         <code>${marker.position.lng()}</code>
+    //       </p>
+    //     `;
     
-        const infoWindow = new google.maps.InfoWindow({
-          content: markerInfo,
-          maxWidth: 200,
-        });
+    //     const infoWindow = new google.maps.InfoWindow({
+    //       content: markerInfo,
+    //       maxWidth: 200,
+    //     });
     
-        marker.addListener('click', () => {
-          infoWindow.open(basicMap, marker);
-        });
-      }
+    //     marker.addListener('click', () => {
+    //       infoWindow.open(basicMap, marker);
+    //     });
+    //   }
 
       //Styling
       const customStyledMap = new google.maps.StyledMapType([

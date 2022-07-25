@@ -7,6 +7,26 @@ html {
   /* width: 100%; */
 }
 
+.width-5 {
+  width: 500px;
+}
+
+.profile-button {
+  float: right;
+}
+.pad-10 {
+  padding: 10px;
+}
+
+.center-all {
+  margin: auto;
+}
+
+#ask-question {
+  float: right;
+  margin-top: 16px;
+}
+
 .hide {
   display: none !important;
 }

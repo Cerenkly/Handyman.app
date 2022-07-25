@@ -3,7 +3,7 @@
 {% block title %}{{ handyman.company_name }} {% endblock %}
 
 {% block body %}
-<h1>{{ handyman.company_name }} (Rating: {{rating}})</h1>
+<h1 class="align-center">{{ handyman.company_name }} (Rating: {{rating}})</h1>
 
 <div class="container">
 
@@ -13,8 +13,91 @@
         <div class="card">
           <img src="/static/img/handyman_background.jpeg" class="card-img-top" alt="...">
           <div class="card-body">
-            <h5 class="card-title">Price: Not Available</h5>
-            <h5 class="card-title">Phone:{{handyman.phone_number}}</h5>
+            <div class="row">
+              <div class="col">
+                <h5 class="card-title">Price: Not Available</h5>
+                <h5 class="card-title">Phone:{{handyman.phone_number}}</h5>
+              </div>
+              <div class="col">
+                {% if current_user_obj %}
+                  {% if handyman.user_id == current_user_obj.user_id %}
+
+                    <button class="inline button-topnav" id="ask-question" type="button" onclick="document.getElementById('id03').style.display='block'" style="width:auto;">Answer Questions</button>
+                    <div id="id03" class="modal">
+                  
+                      <div class="modal-content animate">
+                        <div class="imgcontainer">
+                          <span onclick="document.getElementById('id03').style.display='none'" class="close" title="Close Modal">&times;</span>
+                          <img src="/static/img/handyman_background.jpeg" alt="Avatar" class="avatar">
+                        </div>
+                        {% if handyman.questions %}
+
+                          {% for question in handyman.questions %}
+                            <li style="text-indent: 1em;">{{question.user.first_name}} {{question.user.last_name}} asked "{{question.question}}"</li>
+                            {% if question.answers %}
+                              {% for answer in question.answers %}
+                                <div style="text-indent: 1em;">You responded: {{answer.answer}}</div>
+                              {% endfor %}
+                            {% endif %}
+
+                            <form class="center-all" action="/search_result/{{handyman.handyman_id}}/{{question.question_id}}/answer" method="POST">
+                              <p><label for="answer">Reply:</label></p>
+                              <textarea id="answer" name="answer_{{question.question_id}}" rows="4" cols="44"></textarea>
+                              <br>
+                              <input type="submit" value="Submit">
+                            </form>
+                            <br>
+
+                          {% endfor %}
+                        {% else %}
+                          <div style="text-indent: 1em; margin-bottom: 20px;">Be ready for questions!</div>
+                        {% endif %}
+                      </div>
+                    </div>
+  
+
+                  {% else %}
+                    <button class="inline button-topnav" id="ask-question" type="button" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Ask a Question</button>
+
+                    <div id="id02" class="modal">
+                  
+                      <form class="modal-content animate" action="/search_result/{{handyman.handyman_id}}/question" method="post">
+                        <div class="imgcontainer">
+                          <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+                          <img src="/static/img/handyman_background.jpeg" alt="Avatar" class="avatar">
+                        </div>
+                    
+                        <div class="container">
+                          <label>Previous questions you asked:</label>
+                          {% if current_user_obj.questions %}
+                            {% for question in current_user_obj.questions %}
+                              {% if question.handyman_id == handyman.handyman_id %}
+                                <li>{{question.question}}</li>
+                                {% if question.answers %}
+                                  {% for answer in question.answers %}
+                                    <div style="text-indent: 1.5em;">Response: {{answer.answer}}</div>
+                                  {% endfor %}
+                                {% endif %}
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+                          <br><br>
+                          <p><label for="question">Ask a question:</label></p>
+                          <textarea id="question" name="question" rows="4" cols="44"></textarea>
+                          <br>
+                          <button class="inline button-topnav" type="submit" value="Submit">Submit</button>
+
+
+                        </div>
+
+                      </form>
+                    </div>
+                  {% endif %}
+
+
+                {% endif %}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -49,14 +132,14 @@
 
 
 
-<h4>Reviews</h4>
+<h4 class="align-center w3-round-xlarge">Reviews:</h4>
 {% if session.get('email') %}
-  {% for rating in reviews %}
-    {% if rating.reviews %}
-      <div class="card text-bg-primary mb-3" style="max-width: 40rem;">
-        <div class="card-header">{{rating.user.first_name}}</div>
+  {% for review in reviews %}
+    {% if review.reviews %}
+      <div class="card text-bg-primary mb-3" style="max-width: 80rem;">
+        <div class="card-header">{{review.user.first_name}}</div>
         <div class="card-body">
-          <p class="card-text">{{rating.reviews}}</p>
+          <p class="card-text">{{review.reviews}}</p>
         </div>
       </div>
     {% endif %}
@@ -64,7 +147,8 @@
 {% endif %}
 
 <!-- <img class="company_image" src="/static/img/handyman_background.jpeg"> -->
-{% if current_user_obj %}
+<!-- {% if current_user_obj %}
+
   {% if handyman.user_id != current_user_obj.user_id %}
     {% if session.get('email') %}
       <form action="/search_result/{{handyman.handyman_id}}/question" method="POST">
@@ -75,32 +159,34 @@
       </form>
     {% endif %}
   {% endif %}
-{% endif %}
+{% endif %} -->
 
-<p>
+<!-- <p>
   {% if handyman.questions %}
     {% for question in handyman.questions %}
-      <li>{{question.question}}</li>
+      <li>{{question.user.first_name}} asked {{question.question}}</li>
       {% if question.answers %}
         {% for answer in question.answers %}
           <div style="text-indent: 2em;">{{answer.answer}}</div>
         {% endfor %}
       {% endif %}
-      {% if handyman.user_id == current_user_obj.user_id %}
-        <form action="/search_result/{{handyman.handyman_id}}/{{question.question_id}}/answer" method="POST">
-          <p><label for="answer">Reply:</label></p>
-          <textarea id="answer" name="answer_{{question.question_id}}" rows="4" cols="50"></textarea>
+      {% if current_user_obj %}
+        {% if handyman.user_id == current_user_obj.user_id %}
+          <form action="/search_result/{{handyman.handyman_id}}/{{question.question_id}}/answer" method="POST">
+            <p><label for="answer">Reply:</label></p>
+            <textarea id="answer" name="answer_{{question.question_id}}" rows="4" cols="50"></textarea>
+            <br>
+            <input type="submit" value="Submit">
+          </form>
           <br>
-          <input type="submit" value="Submit">
-        </form>
-        <br>
+        {% endif %}
       {% endif %}
     {% endfor %}
   {% endif %}
-</p>
+</p> -->
 
 {% endblock %}
 
 {% block js %}
-  <script src="/static/js/company_profile.js"></script>
+  <!-- <script src="/static/js/company_profile.js"></script> -->
 {% endblock %}
